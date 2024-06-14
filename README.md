@@ -1,4 +1,4 @@
-# CDP Node.js Backend Template
+# cdp-ct-test-mongo
 
 Core delivery platform Node.js Backend Template.
 
@@ -28,7 +28,7 @@ easier to use the Node Version Manager [nvm](https://github.com/creationix/nvm)
 To use the correct version of Node.js for this application, via nvm:
 
 ```bash
-cd cdp-node-backend-template
+cd cdp-ct-test-mongo
 nvm use
 ```
 
@@ -87,11 +87,11 @@ npm run
 
 ### Postman
 
-A [Postman](https://www.postman.com/) collection and environment are available for making calls to the cdp-node-backend-template API.
+A [Postman](https://www.postman.com/) collection and environment are available for making calls to the cdp-ct-test-mongo API.
 Simply import the collection and environment into Postman.
 
-- [CDP Node Backend Template Postman Collection](postman/cdp-node-backend-template.postman_collection.json)
-- [CDP Node Backend Template Postman Environment](postman/cdp-node-backend-template.postman_environment.json)
+- [CDP Node Backend Template Postman Collection](postman/cdp-ct-test-mongo.postman_collection.json)
+- [CDP Node Backend Template Postman Environment](postman/cdp-ct-test-mongo.postman_environment.json)
 
 ## Development helpers
 
@@ -145,13 +145,13 @@ Helper methods are also available in `/src/helpers/mongo-lock.js`.
 Build:
 
 ```bash
-docker build --target development --no-cache --tag cdp-node-backend-template:development .
+docker build --target development --no-cache --tag cdp-ct-test-mongo:development .
 ```
 
 Run:
 
 ```bash
-docker run -e GITHUB_API_TOKEN -p 3008:3008 cdp-node-backend-template:development
+docker run -e GITHUB_API_TOKEN -p 3008:3008 cdp-ct-test-mongo:development
 ```
 
 ### Production image
@@ -159,13 +159,13 @@ docker run -e GITHUB_API_TOKEN -p 3008:3008 cdp-node-backend-template:developmen
 Build:
 
 ```bash
-docker build --no-cache --tag cdp-node-backend-template .
+docker build --no-cache --tag cdp-ct-test-mongo .
 ```
 
 Run:
 
 ```bash
-docker run -e GITHUB_API_TOKEN -p 3001:3001 cdp-node-backend-template
+docker run -e GITHUB_API_TOKEN -p 3001:3001 cdp-ct-test-mongo
 ```
 
 ### Docker Compose
