@@ -1,41 +1,32 @@
-ARG PARENT_VERSION=2.2.2-node20.11.1
-ARG PORT=3000
-ARG PORT_DEBUG=9229
+FROM debian:bookworm-slim
 
-FROM defradigital/node-development:${PARENT_VERSION} AS development
-ARG PARENT_VERSION
-LABEL uk.gov.defra.ffc.parent-image=defradigital/node-development:${PARENT_VERSION}
+# Redis CLI and misc os stuff
+RUN apt update && \
+    apt install -y curl wget unzip redis-tools less && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
 
-ARG PORT
-ARG PORT_DEBUG
-ENV PORT ${PORT}
-EXPOSE ${PORT} ${PORT_DEBUG}
+# AWS CLI
+RUN curl -s -o aws.zip  "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" && \
+    unzip aws.zip && \
+    ./aws/install && \
+    rm -rf ./aws && \
+    rm aws.zip
 
-COPY --chown=node:node package*.json ./
-RUN npm install
-COPY --chown=node:node . .
-RUN npm run build
+# Mongo Shell
+RUN curl -s -o mongosh.deb "https://downloads.mongodb.com/compass/mongodb-mongosh_2.2.6_amd64.deb" && \
+    dpkg -i mongosh.deb && \
+    rm mongosh.deb
 
-CMD [ "npm", "run", "docker:dev" ]
+# Mongo Tools
+RUN curl -s -o mongotools.deb "https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian12-x86_64-100.9.4.deb" && \
+    dpkg -i mongotools.deb && \
+    rm mongotools.deb
 
-FROM defradigital/node:${PARENT_VERSION} AS production
-ARG PARENT_VERSION
-LABEL uk.gov.defra.ffc.parent-image=defradigital/node:${PARENT_VERSION}
+COPY cdpshell /usr/bin/cdpshell
 
-# Add curl to template.
-# CDP PLATFORM HEALTHCHECK REQUIREMENT
-USER root
-RUN apk update && \
-    apk add curl
-USER node
+RUN useradd -ms /bin/bash cdpshell
+USER cdpshell
+WORKDIR /home/cdpshell
 
-COPY --from=development /home/node/package*.json ./
-COPY --from=development /home/node/.server ./.server/
-
-RUN npm ci --omit=dev
-
-ARG PORT
-ENV PORT ${PORT}
-EXPOSE ${PORT}
-
-CMD [ "node", "./.server" ]
+ENTRYPOINT [ "/usr/bin/cdpshell", "-home", "/home/cdpshell" ]
